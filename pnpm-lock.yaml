@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@types/node': 17.0.4
   '@types/react': 17.0.38
+  classnames: ^2.3.2
   next: latest
   next-pwa: ^5.6.0
   react: ^18.2.0
@@ -10,6 +11,7 @@ specifiers:
   typescript: 4.5.4
 
 dependencies:
+  classnames: 2.3.2
   next: 13.0.4_biqbaboplfbrettd7655fr4n2y
   next-pwa: 5.6.0_next@13.0.4
   react: 18.2.0
@@ -1678,6 +1680,10 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
+    dev: false
+
+  /classnames/2.3.2:
+    resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
     dev: false
 
   /clean-webpack-plugin/4.0.0:

@@ -1,61 +1,95 @@
-import styles from '../styles/Home.module.css'
+import classNames from 'classnames';
+import { useState } from 'react';
+import { UploadIcon } from '../components/icon';
+import styles from '../styles/Home.module.css';
+import { compressFile, downloadFile, pickFile } from '../utils/file';
+
+interface FileTask {
+  name: string;
+  progress: number;
+  file: File;
+  compressedFile?: Blob;
+}
 
 export default function Home() {
+  const [tasks, setTasks] = useState<FileTask[]>([]);
+
+  async function chooseFile() {
+    const files = await pickFile();
+    files.forEach(async (file) => {
+      const stream = compressFile(file);
+      setTasks((prevTasks) => [
+        ...prevTasks,
+        { name: file.name, progress: 0, file },
+      ]);
+      const compressedFile = await stream;
+      console.info(`${file.name} 压缩成功`);
+      setTasks((prevTasks) => {
+        return prevTasks.map((task) => {
+          if (task.file == file) {
+            task.progress = 100;
+            task.compressedFile = compressedFile;
+          }
+          return task;
+        });
+      });
+    });
+  }
+
+  function doDownload(task: FileTask) {
+    if (!task.compressedFile) throw new Error('compressedFile not found');
+    downloadFile(task.compressedFile, task.name);
+  }
+
   return (
     <div className={styles.container}>
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+        <h1 className={classNames(styles.title, styles.textCenter)}>
+          Zipper, file compression in your browser
         </h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
+        <p className={classNames(styles.description, styles.textCenter)}>
+          Support any file format, text, images, videos, audios.
         </p>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+        <p className={classNames(styles.description, styles.textCenter)}>
+          Secure, file never leave your device since zipper work locally.
+        </p>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+        <div className={styles.drop}>
+          <UploadIcon className={styles.dropIcon} />
+          <p className={styles.dropText}>Drag & drop your files here</p>
+          <p className={styles.dropText}>OR</p>
+          <button className={styles.button} onClick={chooseFile}>
+            Browse files
+          </button>
         </div>
-      </main>
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+        {!!tasks.length && (
+          <div className={styles.listHeader}>Uploading files</div>
+        )}
+
+        {tasks.map((task, index) => {
+          return (
+            <div className={styles.row} key={index}>
+              <div className={styles.rowLeft}>
+                <p className={styles.rowTitle}>{task.name}</p>
+                <div className={styles.slider}>
+                  <div
+                    className={styles.progress}
+                    style={{ width: `${task.progress}%` }}
+                  ></div>
+                </div>
+              </div>
+              {task.compressedFile ? (
+                <span onClick={() => doDownload(task)}>下载</span>
+              ) : (
+                <span>{task.progress}%</span>
+              )}
+            </div>
+          );
+        })}
+      </main>
     </div>
-  )
+  );
 }
