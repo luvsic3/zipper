@@ -71,11 +71,11 @@ export default function Home() {
 				</h2>
 
 				<p className={classNames(styles.description, utilStyles.textCenter)}>
-					Support any file format, text, images, videos, audios.
+					Support any file format, text, image, video, audio
 				</p>
 
 				<p className={classNames(styles.description, utilStyles.textCenter)}>
-					Secure, file never leave your device since zipper work locally.
+					Secure, file never leave your device since Zipper work locally
 				</p>
 
 				<div
@@ -101,12 +101,12 @@ export default function Home() {
 						<div className={styles.row} key={index}>
 							<div className={styles.rowLeft}>
 								<p className={styles.rowTitle}>{task.name}</p>
-								<div className={styles.slider}>
+								{/* <div className={styles.slider}>
 									<div
 										className={styles.progress}
 										style={{width: `${task.progress}%`}}
 									></div>
-								</div>
+								</div> */}
 							</div>
 							{task.compressedFile ? (
 								<button
